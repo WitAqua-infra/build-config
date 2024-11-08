@@ -45,6 +45,9 @@ cd /ssd02/WitAqua/${VERSION}
 rm -rf .repo/local_manifests/*
 # rm -rf vendor || true
 if [ -f /ssd02/WitAqua/setup/setup.sh ]; then
+    cd /ssd02/WitAqua/setup/setup.sh
+    git pull
+    cd /ssd02/WitAqua/${VERSION}
     source /ssd02/WitAqua/setup/setup.sh
 fi
 # catch SIGPIPE from yes
