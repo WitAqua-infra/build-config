@@ -43,7 +43,7 @@ echo "--- Syncing"
 mkdir -p /ssd02/WitAqua/${VERSION}/.repo/local_manifests
 cd /ssd02/WitAqua/${VERSION}
 rm -rf .repo/local_manifests/*
-# rm -rf vendor || true
+rm -rf vendor || true
 if [ -f /ssd02/WitAqua/setup/setup.sh ]; then
     cd /ssd02/WitAqua/setup/
     git pull
