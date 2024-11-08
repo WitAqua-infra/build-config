@@ -44,8 +44,8 @@ mkdir -p /ssd02/WitAqua/${VERSION}/.repo/local_manifests
 cd /ssd02/WitAqua/${VERSION}
 rm -rf .repo/local_manifests/*
 # rm -rf vendor || true
-if [ -f /ssd02/WitAqua/setup.sh ]; then
-    source /ssd02/WitAqua/setup.sh
+if [ -f /ssd02/WitAqua/setup/setup.sh ]; then
+    source /ssd02/WitAqua/setup/setup.sh
 fi
 # catch SIGPIPE from yes
 yes | repo init -u https://github.com/WitAqua/manifest.git -b ${VERSION} -g default,-darwin,-muppets,muppets_${DEVICE} --repo-rev=${REPO_VERSION} --git-lfs || if [[ $? -eq 141 ]]; then true; else false; fi
