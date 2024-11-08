@@ -50,6 +50,8 @@ if [ -f /ssd02/WitAqua/setup/setup.sh ]; then
     cd /ssd02/WitAqua/${VERSION}
     source /ssd02/WitAqua/setup/setup.sh
 fi
+
+cd /ssd02/WitAqua/${VERSION}
 # catch SIGPIPE from yes
 yes | repo init -u https://github.com/WitAqua/manifest.git -b ${VERSION} -g default,-darwin,-muppets,muppets_${DEVICE} --repo-rev=${REPO_VERSION} --git-lfs || if [[ $? -eq 141 ]]; then true; else false; fi
 repo version
