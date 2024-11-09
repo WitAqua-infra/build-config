@@ -87,7 +87,8 @@ echo "--- Uploading"
 # scp out/target/product/${DEVICE}/otatools.zip jenkins@blob.lineageos.org:/home/jenkins/incoming/${DEVICE}/${BUILD_UUID}/
 # s3cmd --no-check-md5 put out/dist/*target_files*.zip s3://lineageos-blob/${DEVICE}/${BUILD_UUID}/ || true
 # s3cmd --no-check-md5 put out/target/product/${DEVICE}/otatools.zip s3://lineageos-blob/${DEVICE}/${BUILD_UUID}/ || true
-scp out/target/product/${DEVICE}/*.zip toufu@frs.sourceforge.net:/home/frs/project/witaqua/${VERSION}/${DEVICE}/
-
+# scp out/target/product/${DEVICE}/*.zip toufu@frs.sourceforge.net:/home/frs/project/witaqua/${VERSION}/${DEVICE}/
+mkdir -p /ssd02/output/witaqua/${VERSION}/${DEVICE}/
+cp out/target/product/${DEVICE}/*.zip /ssd02/output/witaqua/${VERSION}/${DEVICE}/
 echo "--- cleanup"
 rm -rf out
