@@ -3,6 +3,7 @@ set -eo pipefail
 echo "--- Setup"
 rm /tmp/android-*.log || true
 unset CCACHE_EXEC
+export WITAQUA_BUILD_TYPE=OFFICIAL
 export PYTHONDONTWRITEBYTECODE=true
 export BUILD_ENFORCE_SELINUX=1
 export BUILD_NO=
