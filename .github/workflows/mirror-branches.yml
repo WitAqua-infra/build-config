@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+
 jobs:
   mirror-branch:
     runs-on: ubuntu-latest
