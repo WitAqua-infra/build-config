@@ -5,7 +5,7 @@ rm /tmp/android-*.log || true
 export USE_CCACHE=1
 export CCACHE_EXEC=/usr/bin/ccache
 export CCACHE_DIR=/ssd02/ccache
-ccache -M 50G
+ccache -M 200G
 export WITAQUA_BUILD_TYPE=OFFICIAL
 export PYTHONDONTWRITEBYTECODE=true
 export BUILD_ENFORCE_SELINUX=1
