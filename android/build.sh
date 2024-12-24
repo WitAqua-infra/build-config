@@ -54,6 +54,13 @@ if [ -f /ssd02/WitAqua/setup/setup.sh ]; then
     source /ssd02/WitAqua/setup/setup.sh
 fi
 
+# WebHook CI Notify
+curl \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -d "{\"content\": \"## Starting build\n- Time: $(date +%Y/%m/%d\ %H:%M:%S)\n- VERSION: **$VERSION**\n- DEVICE: **$DEVICE**\n- UUID: \`$BUILD_UUID\`\n- REPO_VERSION: **$REPO_VERSION**\n- TYPE: **$TYPE**\n- RELEASE_TYPE: **$RELEASE_TYPE**\n\nCheck: [**Buildkite**]($BUILDKITE_BUILD_URL)\"}" \
+  "$WEBHOOK_URL"
+
 cd /ssd02/WitAqua/${VERSION}
 # catch SIGPIPE from yes
 yes | repo init -u https://github.com/WitAqua/manifest.git -b ${VERSION} -g default,-darwin,-muppets,muppets_${DEVICE} --repo-rev=${REPO_VERSION} --git-lfs || if [[ $? -eq 141 ]]; then true; else false; fi
@@ -64,12 +71,12 @@ echo "Syncing"
   repo sync --detach --current-branch --no-tags --force-remove-dirty --force-sync -j12 ||
   repo sync --detach --current-branch --no-tags --force-remove-dirty --force-sync -j12 ||
   repo sync --detach --current-branch --no-tags --force-remove-dirty --force-sync -j12
-) > /tmp/android-sync.log 2>&1
+) > "/tmp/android-sync-$BUILD_UUID.log" 2>&1
 repo forall -c "git lfs pull"
 . build/envsetup.sh
 
 
-echo "--- clobber"
+echo "--- Cleanup"
 rm -rf out
 
 echo "--- breakfast"
@@ -81,7 +88,7 @@ if [[ "$TARGET_PRODUCT" != lineage_* ]]; then
 fi
 
 echo "--- Building"
-mka bacon | tee /tmp/android-build.log
+mka bacon | tee "/tmp/android-build-$BUILD_UUID.log"
 
 echo "--- Uploading"
 # ssh jenkins@blob.lineageos.org rm -rf /home/jenkins/incoming/${DEVICE}/${BUILD_UUID}/
@@ -93,5 +100,10 @@ echo "--- Uploading"
 # scp out/target/product/${DEVICE}/*.zip toufu@frs.sourceforge.net:/home/frs/project/witaqua/${VERSION}/${DEVICE}/
 mkdir -p /ssd02/output/witaqua/${VERSION}/${DEVICE}/
 cp out/target/product/${DEVICE}/*.zip /ssd02/output/witaqua/${VERSION}/${DEVICE}/
-echo "--- cleanup"
+echo "--- Cleanup"
+curl \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -d "{\"content\":\"# Build Successfully:\n- UUID: $BUILD_UUID\nPlease check [**Buildkite**]($BUILDKITE_BUILD_URL)\"}"
+  "$WEBHOOK_URL"
 rm -rf out
