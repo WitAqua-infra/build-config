@@ -22,7 +22,8 @@ unset BUILD_NUMBER
 # EXP_PICK_CHANGES
 
 if [ -z "$BUILD_UUID" ]; then
-  export BUILD_UUID=`uuidgen`
+  #export BUILD_UUID="$(uuidgen)"
+  export BUILD_UUID="$BUILDKITE_BUILD_ID"
 fi
 
 if [ -z "$REPO_VERSION" ]; then
@@ -52,6 +53,7 @@ if [ -f /ssd02/WitAqua/setup/setup.sh ]; then
     git pull
     cd /ssd02/WitAqua/${VERSION}
     source /ssd02/WitAqua/setup/setup.sh
+    source /ssd02/WitAqua/setup/discord.sh
 fi
 
 # WebHook CI Notify
