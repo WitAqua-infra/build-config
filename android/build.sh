@@ -21,6 +21,10 @@ unset BUILD_NUMBER
 # RELEASE_TYPE
 # EXP_PICK_CHANGES
 
+if [ -z "$SF_USER" ]; then
+  export SF_USER="toufu"
+fi
+
 if [ -z "$BUILD_UUID" ]; then
   #export BUILD_UUID="$(uuidgen)"
   export BUILD_UUID="$BUILDKITE_BUILD_ID"
@@ -99,7 +103,8 @@ echo "--- Uploading"
 # scp out/target/product/${DEVICE}/otatools.zip jenkins@blob.lineageos.org:/home/jenkins/incoming/${DEVICE}/${BUILD_UUID}/
 # s3cmd --no-check-md5 put out/dist/*target_files*.zip s3://lineageos-blob/${DEVICE}/${BUILD_UUID}/ || true
 # s3cmd --no-check-md5 put out/target/product/${DEVICE}/otatools.zip s3://lineageos-blob/${DEVICE}/${BUILD_UUID}/ || true
-# scp out/target/product/${DEVICE}/*.zip toufu@frs.sourceforge.net:/home/frs/project/witaqua/${VERSION}/${DEVICE}/
+# scp out/target/product/${DEVICE}/*.zip ${SF_USER}@frs.sourceforge.net:/home/frs/project/witaqua/${VERSION}/${DEVICE}/
+rsync -avP -e ssh out/target/product/${DEVICE}/*.zip ${SF_USER}@frs.sourceforge.net:/home/frs/project/witaqua/${VERSION}/${DEVICE}/
 mkdir -p /ssd02/output/witaqua/${VERSION}/${DEVICE}/
 cp out/target/product/${DEVICE}/*.zip /ssd02/output/witaqua/${VERSION}/${DEVICE}/
 echo "--- Cleanup"
