@@ -22,7 +22,7 @@ unset BUILD_NUMBER
 # EXP_PICK_CHANGES
 
 if [ -z "$SF_USER" ]; then
-  export SF_USER="toufu"
+  export SF_USER="s1204"
 fi
 
 if [ -z "$BUILD_UUID" ]; then
