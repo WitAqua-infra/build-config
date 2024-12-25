@@ -111,6 +111,6 @@ echo "--- Cleanup"
 curl \
   -X POST \
   -H "Content-Type: application/json" \
-  -d "{\"content\":\"# Build Successfully:\n- UUID: $BUILD_UUID\nPlease check [**Buildkite**]($BUILDKITE_BUILD_URL)\"}"
+  -d "{\"content\":\"# Build Successfully:\n- UUID: $BUILD_UUID\nPlease check [**Buildkite**]($BUILDKITE_BUILD_URL)\"}" \
   "$WEBHOOK_URL"
 rm -rf out
