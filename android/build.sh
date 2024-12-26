@@ -64,7 +64,7 @@ fi
 curl \
   -X POST \
   -H "Content-Type: application/json" \
-  -d "{\"content\": \"## Starting build\n- Time: $(date +%Y/%m/%d\ %H:%M:%S)\n- VERSION: **$VERSION**\n- DEVICE: **$DEVICE**\n- UUID: \`$BUILD_UUID\`\n- REPO_VERSION: **$REPO_VERSION**\n- TYPE: **$TYPE**\n- RELEASE_TYPE: **$RELEASE_TYPE**\n\nCheck: [**Buildkite**]($BUILDKITE_BUILD_URL)\"}" \
+  -d "{\"content\": \"## Starting build\n- User: **$BUILDKITE_BUILD_CREATOR**\n- Time: $(date +%Y/%m/%d\ %H:%M:%S)\n- VERSION: **$VERSION**\n- DEVICE: **$DEVICE**\n- UUID: \`$BUILD_UUID\`\n- REPO_VERSION: **$REPO_VERSION**\n- TYPE: **$TYPE**\n- RELEASE_TYPE: **$RELEASE_TYPE**\n\nCheck: [**Buildkite**]($BUILDKITE_BUILD_URL)\"}" \
   "$WEBHOOK_URL"
 
 cd /ssd02/WitAqua/${VERSION}
@@ -73,11 +73,11 @@ yes | repo init -u https://github.com/WitAqua/manifest.git -b ${VERSION} -g defa
 repo version
 
 echo "Syncing"
-(
-  repo sync --detach --current-branch --no-tags --force-remove-dirty --force-sync -j12 ||
-  repo sync --detach --current-branch --no-tags --force-remove-dirty --force-sync -j12 ||
-  repo sync --detach --current-branch --no-tags --force-remove-dirty --force-sync -j12
-) > "/tmp/android-sync-$BUILD_UUID.log" 2>&1
+for i in {1..3}; do
+  repo sync --detach --current-branch --no-tags --force-remove-dirty --force-sync -j12 \
+    > "/tmp/android-sync-$BUILD_UUID.log" 2>&1 && break
+done
+
 repo forall -c "git lfs pull"
 . build/envsetup.sh
 
@@ -85,11 +85,11 @@ repo forall -c "git lfs pull"
 echo "--- Cleanup"
 rm -rf out
 
-echo "--- breakfast"
+echo "--- Run breakfast"
 breakfast ${DEVICE} ${TYPE}
 
 if [[ "$TARGET_PRODUCT" != lineage_* ]]; then
-    echo "Breakfast failed, exiting"
+    echo "breakfast failed, aborting..."
     exit 1
 fi
 
@@ -111,6 +111,6 @@ echo "--- Cleanup"
 curl \
   -X POST \
   -H "Content-Type: application/json" \
-  -d "{\"content\":\"# Build Successfully:\n- UUID: $BUILD_UUID\nPlease check [**Buildkite**]($BUILDKITE_BUILD_URL)\"}" \
+  -d "{\"content\":\"# Build Successfully!\n- UUID: $BUILD_UUID\nPlease check [**Buildkite**]($BUILDKITE_BUILD_URL)\"}" \
   "$WEBHOOK_URL"
 rm -rf out
