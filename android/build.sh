@@ -25,6 +25,10 @@ if [ -z "$SF_USER" ]; then
   export SF_USER="s1204"
 fi
 
+if [ -z "$BUILD_USER" ]; then
+  export BUILD_USER="${BUILDKITE_BUILD_CREATOR:-Automatically}"
+fi
+
 if [ -z "$BUILD_UUID" ]; then
   #export BUILD_UUID="$(uuidgen)"
   export BUILD_UUID="$BUILDKITE_BUILD_ID"
@@ -64,7 +68,7 @@ fi
 curl \
   -X POST \
   -H "Content-Type: application/json" \
-  -d "{\"content\": \"## Starting build\n- User: **$BUILDKITE_BUILD_CREATOR**\n- Time: $(date +%Y/%m/%d\ %H:%M:%S)\n- VERSION: **$VERSION**\n- DEVICE: **$DEVICE**\n- UUID: \`$BUILD_UUID\`\n- REPO_VERSION: **$REPO_VERSION**\n- TYPE: **$TYPE**\n- RELEASE_TYPE: **$RELEASE_TYPE**\n\nCheck: [**Buildkite**]($BUILDKITE_BUILD_URL)\"}" \
+  -d "{\"content\": \"## Starting build\n- User: **$BUILD_USER**\n- Time: $(date +%Y/%m/%d\ %H:%M:%S)\n- VERSION: **$VERSION**\n- DEVICE: **$DEVICE**\n- UUID: \`$BUILD_UUID\`\n- REPO_VERSION: **$REPO_VERSION**\n- TYPE: **$TYPE**\n- RELEASE_TYPE: **$RELEASE_TYPE**\n\nCheck: [**Buildkite**]($BUILDKITE_BUILD_URL)\"}" \
   "$WEBHOOK_URL"
 
 cd /ssd02/WitAqua/${VERSION}
