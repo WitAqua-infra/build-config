@@ -26,7 +26,11 @@ if [ -z "$SF_USER" ]; then
 fi
 
 if [ -z "$BUILD_USER" ]; then
-  export BUILD_USER="${BUILDKITE_BUILD_CREATOR:-Automatically}"
+  if [ "$BUILDKITE_BUILD_CREATOR" == "" ]; then
+    export BUILD_USER="Automatically"
+  else
+    export BUILD_USER="$BUILDKITE_BUILD_CREATOR"
+  fi
 fi
 
 if [ -z "$BUILD_UUID" ]; then
