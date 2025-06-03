@@ -115,6 +115,12 @@ echo "--- Uploading"
 rsync -avP -e ssh out/target/product/${DEVICE}/WitAqua-*-OFFICIAL.zip ${SF_USER}@frs.sourceforge.net:/home/frs/project/witaqua/${VERSION}/${DEVICE}/
 mkdir -p /ssd02/output/witaqua/${VERSION}/${DEVICE}/
 cp out/target/product/${DEVICE}/WitAqua-*-OFFICIAL.zip /ssd02/output/witaqua/${VERSION}/${DEVICE}/
+cd WitAquaOTA
+git add .
+git commit -m "${DEVICE}: $(date +"%Y%m%d") Update"
+git remote add gerrit https://gerrit.witaqua.org/WitAquaOTA
+git push gerrit HEAD:refs/for/${VERSION}
+cd ..
 echo "--- Cleanup"
 curl \
   -X POST \
