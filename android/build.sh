@@ -119,6 +119,7 @@ cd WitAquaOTA
 git add .
 git commit -m "${DEVICE}: $(date +"%Y%m%d") Update"
 if git remote get-url gerrit >/dev/null 2>&1; then
+  git remote set-url gerrit ssh://roX2x9quub@gerrit.witaqua.org:29418/WitAquaOTA
   echo "リモート gerrit はすでに設定されています。"
 else
   git remote add gerrit ssh://roX2x9quub@gerrit.witaqua.org:29418/WitAquaOTA
