@@ -118,7 +118,7 @@ cp out/target/product/${DEVICE}/WitAqua-*-OFFICIAL.zip /ssd02/output/witaqua/${V
 cd WitAquaOTA
 git add .
 git commit -m "${DEVICE}: $(date +"%Y%m%d") Update"
-git remote add gerrit https://gerrit.witaqua.org/WitAquaOTA
+git remote add gerrit ssh://roX2x9quub@gerrit.witaqua.org:29418/WitAquaOTA
 git push gerrit HEAD:refs/for/${VERSION}
 cd ..
 echo "--- Cleanup"
