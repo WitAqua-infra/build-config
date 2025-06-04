@@ -118,7 +118,12 @@ cp out/target/product/${DEVICE}/WitAqua-*-OFFICIAL.zip /ssd02/output/witaqua/${V
 cd WitAquaOTA
 git add .
 git commit -m "${DEVICE}: $(date +"%Y%m%d") Update"
-git remote add gerrit ssh://roX2x9quub@gerrit.witaqua.org:29418/WitAquaOTA
+if git remote get-url gerrit >/dev/null 2>&1; then
+  echo "リモート gerrit はすでに設定されています。"
+else
+  git remote add gerrit ssh://roX2x9quub@gerrit.witaqua.org:29418/WitAquaOTA
+  echo "リモート gerrit を追加しました"
+fi
 git push gerrit HEAD:refs/for/${VERSION}
 cd ..
 echo "--- Cleanup"
