@@ -125,6 +125,7 @@ else
   git remote add gerrit ssh://roX2x9quub@gerrit.witaqua.org:29418/WitAquaOTA
   echo "リモート gerrit を追加しました"
 fi
+gitdir=$(git rev-parse --git-dir); scp -O -p -P 29418 roX2x9quub@gerrit.witaqua.org:hooks/commit-msg ${gitdir}/hooks/
 git push gerrit HEAD:refs/for/${VERSION}
 cd ..
 echo "--- Cleanup"
