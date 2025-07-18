@@ -117,7 +117,7 @@ echo "--- Uploading"
 # s3cmd --no-check-md5 put out/dist/*target_files*.zip s3://lineageos-blob/${DEVICE}/${BUILD_UUID}/ || true
 # s3cmd --no-check-md5 put out/target/product/${DEVICE}/otatools.zip s3://lineageos-blob/${DEVICE}/${BUILD_UUID}/ || true
 # scp out/target/product/${DEVICE}/*.zip ${SF_USER}@frs.sourceforge.net:/home/frs/project/witaqua/${VERSION}/${DEVICE}/
-rsync -avP --mkpath -e ssh out/target/product/${DEVICE}/WitAqua-*-OFFICIAL.zip ${GERRIT_DL_USER}@download.witaqua.org://mnt/NS100/witaqua_build/${VERSION}/${DEVICE}/{$BUILD_DATE}/
+rsync -avP --mkpath -e ssh out/target/product/${DEVICE}/WitAqua-*-OFFICIAL.zip ${GERRIT_DL_USER}@download.witaqua.org://mnt/NS100/witaqua_build/${VERSION}/${DEVICE}/${BUILD_DATE}/
 ssh "${GERRIT_DL_USER}@download.witaqua.org" "python /mnt/NS100/download/updater/gen_mirror_json.py /mnt/NS100/witaqua_build > /mnt/NS100/witaqua_build/builds.json"
 mkdir -p /ssd02/output/witaqua/${VERSION}/${DEVICE}/
 cp out/target/product/${DEVICE}/WitAqua-*-OFFICIAL.zip /ssd02/output/witaqua/${VERSION}/${DEVICE}/
