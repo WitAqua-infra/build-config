@@ -12,15 +12,6 @@ export BUILD_ENFORCE_SELINUX=1
 export BUILD_NO=
 unset BUILD_NUMBER
 
-#TODO(zif): convert this to a runtime check, grep "sse4_2.*popcnt" /proc/cpuinfo
-# export CPU_SSE42=false
-# Following env is set from build
-# VERSION
-# DEVICE
-# TYPE
-# RELEASE_TYPE
-# EXP_PICK_CHANGES
-
 export BUILD_DATE=$(date +%Y%m%d)
 if [ -z "$GERRIT_DL_USER" ]; then
   export GERRIT_DL_USER="download"
@@ -110,13 +101,6 @@ echo "--- Building"
 mka bacon | tee "/tmp/android-build-$BUILD_UUID.log"
 
 echo "--- Uploading"
-# ssh jenkins@blob.lineageos.org rm -rf /home/jenkins/incoming/${DEVICE}/${BUILD_UUID}/
-# ssh jenkins@blob.lineageos.org mkdir -p /home/jenkins/incoming/${DEVICE}/${BUILD_UUID}/
-# scp out/dist/*target_files*.zip jenkins@blob.lineageos.org:/home/jenkins/incoming/${DEVICE}/${BUILD_UUID}/
-# scp out/target/product/${DEVICE}/otatools.zip jenkins@blob.lineageos.org:/home/jenkins/incoming/${DEVICE}/${BUILD_UUID}/
-# s3cmd --no-check-md5 put out/dist/*target_files*.zip s3://lineageos-blob/${DEVICE}/${BUILD_UUID}/ || true
-# s3cmd --no-check-md5 put out/target/product/${DEVICE}/otatools.zip s3://lineageos-blob/${DEVICE}/${BUILD_UUID}/ || true
-# scp out/target/product/${DEVICE}/*.zip ${SF_USER}@frs.sourceforge.net:/home/frs/project/witaqua/${VERSION}/${DEVICE}/
 rsync -avP --mkpath -e ssh out/target/product/${DEVICE}/WitAqua-*-OFFICIAL.zip ${GERRIT_DL_USER}@download.witaqua.org://mnt/NS100/witaqua_build/${VERSION}/${DEVICE}/${BUILD_DATE}/
 for file in $(echo "$UPLOAD_FILES" | tr ',' ' '); do
     rsync -avP --mkpath -e ssh out/target/product/${DEVICE}/$file ${GERRIT_DL_USER}@download.witaqua.org://mnt/NS100/witaqua_build/${VERSION}/${DEVICE}/${BUILD_DATE}/
@@ -124,19 +108,6 @@ done
 ssh "${GERRIT_DL_USER}@download.witaqua.org" "python /mnt/NS100/download/updater/gen_mirror_json.py /mnt/NS100/witaqua_build > /mnt/NS100/witaqua_build/builds.json"
 mkdir -p /ssd02/output/witaqua/${VERSION}/${DEVICE}/
 cp out/target/product/${DEVICE}/WitAqua-*-OFFICIAL.zip /ssd02/output/witaqua/${VERSION}/${DEVICE}/
-cd WitAquaOTA
-git add .
-if git remote get-url gerrit >/dev/null 2>&1; then
-  git remote set-url gerrit ssh://roX2x9quub@gerrit.witaqua.org:29418/WitAquaOTA
-  echo "リモート gerrit はすでに設定されています。"
-else
-  git remote add gerrit ssh://roX2x9quub@gerrit.witaqua.org:29418/WitAquaOTA
-  echo "リモート gerrit を追加しました"
-fi
-gitdir=$(git rev-parse --git-dir); scp -O -p -P 29418 roX2x9quub@gerrit.witaqua.org:hooks/commit-msg ${gitdir}/hooks/
-git commit -m "${DEVICE}: $(date +"%Y%m%d") Update"
-git push gerrit HEAD:refs/for/${VERSION}
-cd ..
 echo "--- Cleanup"
 curl \
   -X POST \
