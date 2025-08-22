@@ -17,19 +17,29 @@ def main():
     for line in targets.split("\n"):
         if not line or line.startswith("#"):
             continue
-        device, build_type, version, cadence = line.split()
+
+        parts = line.split()
+        device, build_type, version, cadence = parts[:4]
+        upload_files = ""
+        if len(parts) >= 5:
+            upload_files = parts[4]
+
+        env_vars = {
+            'DEVICE': device,
+            'RELEASE_TYPE': 'nightly',
+            'TYPE': build_type,
+            'VERSION': version,
+            'BUILD_UUID': uuid.uuid4().hex,
+        }
+
+        if upload_files:
+            env_vars['UPLOAD_FILES'] = upload_files
 
         pipeline['steps'].append({
             'label': '{} {}'.format(device, today.strftime("%Y%m%d")),
             'trigger': 'android',
             'build': {
-                'env': {
-                    'DEVICE': device,
-                    'RELEASE_TYPE': 'nightly',
-                    'TYPE': build_type,
-                    'VERSION': version,
-                    'BUILD_UUID': uuid.uuid4().hex,
-                },
+                'env': env_vars,
                 'branch': version
             },
         })
