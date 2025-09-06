@@ -82,7 +82,7 @@ for i in {1..3}; do
     > "/tmp/android-sync-$BUILD_UUID.log" 2>&1 && break
 done
 
-repo forall -vpc "git lfs pull" >> "/tmp/android-sync-$BUILD_UUID.log" 2>&1
+repo forall -vpc "if [ -f .gitattributes ]; then git lfs pull; fi" >> "/tmp/android-sync-$BUILD_UUID.log" 2>&1
 . build/envsetup.sh
 
 
