@@ -15,8 +15,6 @@ jobs:
       - name: Mirroring other branches
         run: |
           git fetch origin main
-          git push origin -f refs/remotes/origin/main:refs/heads/14
-          git push origin -f refs/remotes/origin/main:refs/heads/15
           git push origin -f refs/remotes/origin/main:refs/heads/15.1
           git push origin -f refs/remotes/origin/main:refs/heads/15.2
           git push origin -f refs/remotes/origin/main:refs/heads/16.0
