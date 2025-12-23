@@ -68,7 +68,7 @@ fi
 curl \
   -X POST \
   -H "Content-Type: application/json" \
-  -d "{\"content\": \"## Starting build\n- User: **$BUILD_USER**\n- Time: $(date +%Y/%m/%d\ %H:%M:%S)\n- VERSION: **$VERSION**\n- DEVICE: **$DEVICE**\n- UUID: \`$BUILD_UUID\`\n- REPO_VERSION: **$REPO_VERSION**\n- TYPE: **$TYPE**\n- RELEASE_TYPE: **$RELEASE_TYPE**\n\nCheck: [**Buildkite**]($BUILDKITE_BUILD_URL)\"}" \
+  -d "{\"content\": \"## Starting build\n- User: **$BUILD_USER**\n- Time: $(date +%Y/%m/%d\ %H:%M:%S)\n- VERSION: **$VERSION**\n- DEVICE: **$DEVICE**\n- UUID: \`$BUILD_UUID\`\n- REPO_VERSION: **$REPO_VERSION**\n- TYPE: **$TYPE**\n\nCheck: [**Buildkite**]($BUILDKITE_BUILD_URL)\"}" \
   "$WEBHOOK_URL"
 
 cd /ssd02/WitAqua/${VERSION}
