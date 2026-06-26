@@ -12,7 +12,6 @@ def main():
     targets = sys.stdin.read()
     pipeline = {"steps": []}
     today = datetime.today()
-    ship = os.getenv("SHIP")
 
     for line in targets.split("\n"):
         if not line or line.startswith("#"):

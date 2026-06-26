@@ -29,6 +29,13 @@ if [ -z "$BUILD_USER" ]; then
   fi
 fi
 
+# Following env is set from build
+# VERSION
+# DEVICE
+# TYPE
+# RELEASE_TYPE
+# EXP_PICK_CHANGES
+
 if [ -z "$BUILD_UUID" ]; then
   #export BUILD_UUID="$(uuidgen)"
   export BUILD_UUID="$BUILDKITE_BUILD_ID"
@@ -49,6 +56,9 @@ fi
 
 OFFSET="10000000"
 export BUILD_NUMBER=$(($OFFSET + $BUILDKITE_BUILD_NUMBER))
+
+export KERNEL_REPO_PROJECT_OBJECTS_DIR=/ssd02/WitAqua/${VERSION}/.repo/project-objects-kernel
+export KERNEL_REPO_PROJECTS_DIR=/ssd02/WitAqua/${VERSION}/.repo/projects-kernel
 
 echo "--- Syncing"
 
@@ -73,21 +83,22 @@ curl \
 
 cd /ssd02/WitAqua/${VERSION}
 # catch SIGPIPE from yes
-yes | repo init -u https://github.com/WitAqua/manifest.git -b ${VERSION} -g default,-darwin,-muppets,muppets_${DEVICE} --repo-rev=${REPO_VERSION} --git-lfs || if [[ $? -eq 141 ]]; then true; else false; fi
+yes | repo init -u https://github.com/WitAqua/manifest.git -b ${VERSION} -g default,-darwin,-muppets,muppets_${DEVICE} --repo-rev=${REPO_VERSION} --git-lfs --no-clone-bundle || if [[ $? -eq 141 ]]; then true; else false; fi
 repo version
 
 echo "Syncing"
-for i in {1..3}; do
-  repo sync --detach --current-branch --no-tags --force-remove-dirty --force-sync -j12 \
-    >> "/tmp/android-sync-$BUILD_UUID.log" 2>&1 && break
-done
-
-repo forall -vpc "if [ -f .gitattributes ]; then git lfs pull; fi" >> "/tmp/android-sync-$BUILD_UUID.log" 2>&1
+repo forall -c "git reset --hard && git clean -fdx" || true
+(
+  repo sync --detach --current-branch --no-tags --force-remove-dirty --force-sync -j12 ||
+  repo sync --detach --current-branch --no-tags --force-remove-dirty --force-sync -j12 ||
+  repo sync --detach --current-branch --no-tags --force-remove-dirty --force-sync -j12
+) > /tmp/android-sync.log 2>&1
+repo forall -vpc "if [ -f .gitattributes ]; then git lfs pull; fi" >> /tmp/android-sync.log 2>&1
 . build/envsetup.sh
 
 
 echo "--- Cleanup"
-rm -rf out
+rm -rf out*
 
 echo "--- Run breakfast"
 breakfast ${DEVICE} ${TYPE}
@@ -114,4 +125,6 @@ curl \
   -H "Content-Type: application/json" \
   -d "{\"content\":\"# Build Successfully!\n- UUID: \`$BUILD_UUID\`\nPlease check [**Buildkite**]($BUILDKITE_BUILD_URL)\"}" \
   "$WEBHOOK_URL"
-rm -rf out
+
+echo "--- cleanup"
+rm -rf out*
